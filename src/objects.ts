@@ -47,6 +47,14 @@ export function isCorrect(question: Question, answer: string): boolean {
  * be exactly one of the options.
  */
 export function isValid(question: Question, answer: string): boolean {
+    //valid if short answer question
+    if (question.type === "short_answer_question") {
+        return true;
+    }
+    //valid if answer is one of the mc choices
+    if (question.options.includes(answer)) {
+        return true;
+    }
     return false;
 }
 
@@ -57,7 +65,9 @@ export function isValid(question: Question, answer: string): boolean {
  * name "My First Question" would become "9: My First Q".
  */
 export function toShortForm(question: Question): string {
-    return "";
+    let identifier: string =
+        question.id.toString() + ": " + question.name.slice(0, 10);
+    return identifier;
 }
 
 /**
@@ -78,7 +88,12 @@ export function toShortForm(question: Question): string {
  * Check the unit tests for more examples of what this looks like!
  */
 export function toMarkdown(question: Question): string {
-    return "";
+    let options: string = "";
+    for (let i: number = 0; i < question.options.length; i++) {
+        options += "\n- ";
+        options += question.options[i];
+    }
+    return "# " + question.name + "\n" + question.body + options;
 }
 
 /**
@@ -86,7 +101,17 @@ export function toMarkdown(question: Question): string {
  * `newName`.
  */
 export function renameQuestion(question: Question, newName: string): Question {
-    return question;
+    let newQ: Question = {
+        body: question.body,
+        expected: question.expected,
+        id: question.id,
+        name: newName,
+        options: [...question.options],
+        points: question.points,
+        published: question.published,
+        type: question.type,
+    };
+    return newQ;
 }
 
 /**
@@ -95,7 +120,23 @@ export function renameQuestion(question: Question, newName: string): Question {
  * published; if it was published, now it should be not published.
  */
 export function publishQuestion(question: Question): Question {
-    return question;
+    let newBool: boolean;
+    if (question.published === true) {
+        newBool = false;
+    } else {
+        newBool = true;
+    }
+    let newQ: Question = {
+        body: question.body,
+        expected: question.expected,
+        id: question.id,
+        name: question.name,
+        options: [...question.options],
+        points: question.points,
+        published: newBool,
+        type: question.type,
+    };
+    return newQ;
 }
 
 /**
@@ -105,7 +146,17 @@ export function publishQuestion(question: Question): Question {
  * The `published` field should be reset to false.
  */
 export function duplicateQuestion(id: number, oldQuestion: Question): Question {
-    return oldQuestion;
+    let copy: Question = {
+        body: oldQuestion.body,
+        expected: oldQuestion.expected,
+        id: id,
+        name: "Copy of " + oldQuestion.name,
+        options: [...oldQuestion.options],
+        points: oldQuestion.points,
+        published: false,
+        type: oldQuestion.type,
+    };
+    return copy;
 }
 
 /**
@@ -116,7 +167,17 @@ export function duplicateQuestion(id: number, oldQuestion: Question): Question {
  * Check out the subsection about "Nested Fields" for more information.
  */
 export function addOption(question: Question, newOption: string): Question {
-    return question;
+    let newQ: Question = {
+        body: question.body,
+        expected: question.expected,
+        id: question.id,
+        name: question.name,
+        options: [...question.options, newOption],
+        points: question.points,
+        published: question.published,
+        type: question.type,
+    };
+    return newQ;
 }
 
 /**
@@ -133,5 +194,14 @@ export function mergeQuestion(
     contentQuestion: Question,
     { points }: { points: number },
 ): Question {
-    return contentQuestion;
+    return {
+        body: contentQuestion.body,
+        expected: contentQuestion.expected,
+        id: id,
+        name: name,
+        options: [...contentQuestion.options],
+        points: points,
+        published: false,
+        type: contentQuestion.type,
+    };
 }
