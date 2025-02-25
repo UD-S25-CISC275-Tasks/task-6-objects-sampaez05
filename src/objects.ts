@@ -121,7 +121,7 @@ export function renameQuestion(question: Question, newName: string): Question {
  */
 export function publishQuestion(question: Question): Question {
     let newBool: boolean;
-    if (question.published === true) {
+    if (question.published) {
         newBool = false;
     } else {
         newBool = true;
